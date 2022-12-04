@@ -1,28 +1,16 @@
-use std::{error::Error, str::FromStr};
+use sscanf::sscanf;
 
 struct SectionRange {
     start: usize,
     end: usize,
 }
 
-impl FromStr for SectionRange {
-    type Err = Box<dyn Error>;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let section_parts: Vec<&str> = s.split(|c| c == '-').collect();
-        assert_eq!(section_parts.len(), 2);
-        let start = section_parts[0].parse()?;
-        let end = section_parts[1].parse()?;
-        Ok(SectionRange { start, end })
-    }
-}
-
 fn section_ranges_from_line(line: &str) -> (SectionRange, SectionRange) {
-    let parts: Vec<&str> = line.split(|c| c == ',').collect();
-    let r1: SectionRange = parts[0].parse().unwrap();
-    let r2: SectionRange = parts[1].parse().unwrap();
-
-    (r1, r2)
+    let (s1, e1, s2, e2) = sscanf!(line, "{usize}-{usize},{usize}-{usize}").unwrap();
+    (
+        SectionRange { start: s1, end: e1 },
+        SectionRange { start: s2, end: e2 },
+    )
 }
 
 fn fully_overlap(r1: SectionRange, r2: SectionRange) -> bool {
