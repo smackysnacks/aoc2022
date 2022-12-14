@@ -46,30 +46,33 @@ fn part1(instructions: &[Inst]) -> isize {
     sum
 }
 
-fn part2(instructions: &[Inst]) {
+fn part2(instructions: &[Inst]) -> String {
+    let mut s = String::new();
     let mut x = 1;
     let mut cycle = 0;
 
     for inst in instructions {
         for _ in 0..inst.clocks {
             if x - 1 <= cycle && cycle <= x + 1 {
-                print!("#");
+                s.push('#');
             } else {
-                print!(".");
+                s.push('.');
             }
             cycle += 1;
-            if cycle == 40 {
+            if cycle % 40 == 0 {
                 cycle = 0;
-                println!();
+                s.push('\n');
             }
         }
         x += inst.adjustment;
     }
+
+    s
 }
 
 fn main() {
     let input = include_str!("../input.txt");
     let instructions = parse_input(input);
     dbg!(part1(&instructions));
-    part2(&instructions);
+    println!("part2:\n{}", part2(&instructions));
 }
